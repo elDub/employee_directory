@@ -5,9 +5,8 @@ RSpec.describe "leads#create", type: :request do
     jsonapi_post "/api/v1/leads", payload
   end
 
-  let!(:user) { create(:user) }
-  let!(:other_asset_type) { create(:asset_type, reference_code: 'dontchangeme', user_id: user.id) }
-  let!(:asset_type) { create(:asset_type, reference_code: 'changeme', user_id: user.id) }
+  let!(:first_asset_type) { create(:asset_type, reference_code: 'first-type') }
+  let!(:second_asset_type) { create(:asset_type, reference_code: 'second-type') }
 
   describe 'elDub' do
     let(:payload) do
@@ -42,7 +41,7 @@ RSpec.describe "leads#create", type: :request do
               asset_type: {
                 data: {
                   type: 'asset_types',
-                  id: asset_type.id,
+                  id: second_asset_type.id,
                   method: 'update'
                 }
               }
@@ -50,9 +49,9 @@ RSpec.describe "leads#create", type: :request do
           },
           {
             type: 'asset_types',
-            id: asset_type.id,
+            id: second_asset_type.id,
             attributes: {
-              reference_code: 'IMC'
+              reference_code: 'second-type-changed'
             }
           },
           {
@@ -62,7 +61,7 @@ RSpec.describe "leads#create", type: :request do
               asset_type: {
                 data: {
                   type: 'asset_types',
-                  id: asset_type.id,
+                  id: second_asset_type.id,
                   method: 'update'
                 }
               }
@@ -70,21 +69,29 @@ RSpec.describe "leads#create", type: :request do
           },
           {
             type: 'asset_types',
-            id: asset_type.id,
+            id: second_asset_type.id,
             attributes: {
-              reference_code: 'IMC'
+              reference_code: 'second-type-changed'
             }
           }
         ]
       }
     end
 
-    it 'works' do
+    it 'does NOT update first_asset_type' do
       make_request
-      expect(asset_type.reference_code).to eq('changeme')
-      expect(other_asset_type.reference_code).to eq('dontchangeme')
-      expect(LeadWanted.first.asset_type_id).to eq(asset_type.id)
-      expect(LeadWanted.last.asset_type_id).to eq(asset_type.id)
+      expect(first_asset_type.reload.reference_code).to eq('first-type')
+    end
+
+    it 'updates second_asset_type' do
+      make_request
+      expect(second_asset_type.reload.reference_code).to eq('second-type-changed')
+    end
+
+    it 'creates two LeadWanted records' do
+      expect{ make_request }.to change{ LeadWanted.count }.by(2)
+      expect(LeadWanted.first.asset_type_id).to eq(second_asset_type.id)
+      expect(LeadWanted.last.asset_type_id).to eq(second_asset_type.id)
     end
   end
 end

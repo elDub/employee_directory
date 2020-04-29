@@ -698,16 +698,35 @@
           "readable": true,
           "writable": true,
           "description": null
+        },
+        "lead_id": {
+          "type": "integer_id",
+          "readable": true,
+          "writable": true,
+          "description": null
         }
       },
       "extra_attributes": {
       },
       "sorts": {
         "id": {
+        },
+        "lead_id": {
         }
       },
       "filters": {
         "id": {
+          "type": "integer_id",
+          "operators": [
+            "eq",
+            "not_eq",
+            "gt",
+            "gte",
+            "lt",
+            "lte"
+          ]
+        },
+        "lead_id": {
           "type": "integer_id",
           "operators": [
             "eq",

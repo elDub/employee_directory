@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_123804) do
+ActiveRecord::Schema.define(version: 2020_04_29_122846) do
 
   create_table "asset_types", force: :cascade do |t|
-    t.integer "user_id"
     t.string "reference_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -41,7 +40,6 @@ ActiveRecord::Schema.define(version: 2020_04_29_123804) do
   end
 
   create_table "leads", force: :cascade do |t|
-    t.integer "user_id"
     t.string "channel"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -103,11 +101,6 @@ ActiveRecord::Schema.define(version: 2020_04_29_123804) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["department_id"], name: "index_teams_on_department_id"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
 end
